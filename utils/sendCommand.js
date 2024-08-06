@@ -15,7 +15,6 @@ export const sendTerminalCommand = () => {
     ) {
       console.log("Exiting...");
       rl.close();
-      // process.exit(0);
     } else {
       // chatCompletion(input).then(() => getPrompt());
       // Call getPrompt again to ask for the next input

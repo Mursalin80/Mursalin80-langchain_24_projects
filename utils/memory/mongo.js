@@ -1,7 +1,7 @@
 import { MongoDBChatMessageHistory } from "@langchain/mongodb";
 import { ObjectId } from "mongodb";
 
-import { client } from "../utils/mongoClient.js";
+import { client } from "../mongoClient.js";
 
 await client.connect();
 const collection = client.db("langchain").collection("memory");

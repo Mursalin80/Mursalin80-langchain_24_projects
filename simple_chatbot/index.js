@@ -1,7 +1,6 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { HumanMessage } from "@langchain/core/messages";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 
 export const model = new ChatGoogleGenerativeAI({
