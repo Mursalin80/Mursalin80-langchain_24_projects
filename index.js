@@ -6,4 +6,7 @@
 
 /******* langchain_history ******** */
 // import "./langchain_history/index.js";
-import "./langchain_history/upstash.js";
+// import "./langchain_history/upstash.js";
+
+/*******    Local RAG */
+import "./langchain_rag/local_rag.js";

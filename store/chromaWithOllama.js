@@ -6,14 +6,15 @@ import { huggingFaceEmbedding } from "../embdding/embdding.js";
 import "cheerio";
 import { ChromaClient } from "chromadb";
 
-let vectorStore,
-  client,
-  collectionName = "ollama",
-  collection;
+let vectorStore;
+
 const embeddings = new OllamaEmbeddings({ model: "all-minilm" });
 
 export const upLoadDocToVectorStore = async () => {
-  let docUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/";
+  let docUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/",
+    client,
+    collectionName = "ollama",
+    collection;
   const loader = new CheerioWebBaseLoader(docUrl);
   const docs = await loader.load();
 
@@ -22,9 +23,8 @@ export const upLoadDocToVectorStore = async () => {
     chunkOverlap: 200,
   });
   const splits = await textSplitter.splitDocuments(docs);
-  vectorStore = new Chroma(huggingFaceEmbedding, {
+  vectorStore = new Chroma(embeddings, {
     collectionName,
-
     url: "http://localhost:8000", // Optional, will default to this value
     collectionMetadata: {
       "hnsw:space": "cosine",
@@ -32,23 +32,18 @@ export const upLoadDocToVectorStore = async () => {
     // Optional, can be used to specify the distance method of the embedding space
     //  https://docs.trychroma.com/usage-guide#changing-the-distance-function
   });
-
-  // console.log(splits[0].pageContent);
+  client = new ChromaClient();
 
   try {
-    client = new ChromaClient();
+    // await client.deleteCollection({ name: collectionName });
     collection = await client.getOrCreateCollection({ name: collectionName });
-
     let count = await collection.count();
-    console.log("🚀 ~ upLoadDocToVectorStore ~ count:", count);
+    // console.log("🚀 ~ upLoadDocToVectorStore ~ count:", count);
 
     if (count <= 0) {
       await vectorStore.addDocuments(splits);
       console.log("Documents uploaded to vector store successful!!!");
     }
-
-    count = await collection.count();
-    console.log({ count });
   } catch (error) {
     console.log({ error });
   }
@@ -61,12 +56,12 @@ export const getVectorStore = async () => {
   return vectorStore.asRetriever({ k: 3 });
 };
 
-try {
-  await getVectorStore();
-  const question = "What are the approaches to Task Decomposition?";
+// try {
+//   await getVectorStore();
+//   const question = "What are the approaches to Task Decomposition?";
 
-  const docs = await vectorStore.similaritySearch(question);
-  console.log({ docs });
-} catch (error) {
-  console.log({ error });
-}
+//   const docs = await vectorStore.similaritySearch(question);
+//   console.log(docs.length);
+// } catch (error) {
+//   console.log({ error });
+// }
